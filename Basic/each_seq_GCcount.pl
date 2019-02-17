@@ -23,7 +23,7 @@ while (my $seq = $Muti_seq->next_seq()) {
 	my $seq_length = length$seq_seq;
 	my @split_seq = split//,$seq_seq;
 	my $GC_count;
-	for (my $i=0; $i<=@split_seq; $i= $i+1,){
+	for (my $i=0; $i<@split_seq; $i= $i+1,){
 		if(@split_seq[$i] eq "G"){$GC_count = $GC_count + 1}
 		elsif(@split_seq[$i] eq "C"){$GC_count = $GC_count + 1}
 		else{$GC_count = $GC_count}
