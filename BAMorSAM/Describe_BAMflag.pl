@@ -31,12 +31,13 @@ use POSIX;
 =head3 Edit time
 
 
-	2019-07-20 19:51
-
+	2019-07-20 19:51	1.0
+	2019-07-21 00:23	1.1 add reads name	
 	
 =cut
 
 
+#Subfunction decimal to binary
 
 sub Ten2Two {
 
@@ -72,6 +73,7 @@ sub Ten2Two {
 	return $ten2two;
 }
 
+#main program
 
 my $input_bamrecord = $ARGV[0];
 
@@ -104,6 +106,9 @@ my %FLAG_describe = (
 						
 );
 
+#Sort the hash's keys, find the corresponding hash through the index of the array
+#Under the binary number, where the digit is 1 to represent the information where in hash
+
 my @arr = keys %FLAG_describe;
 
 my @arr_sort = sort { $a <=> $b } @arr;
@@ -114,11 +119,13 @@ while(<file>){
 
 	my @record_line = split/\t/,$_;
 	
+	my $reads_name = $record_line[0];
+	
 	my $record_num = $record_line[1];
 	
 	if($record_num == 0){
 		
-		push @Record_FLAG_info, "Single End"."\n";
+		push @Record_FLAG_info, $reads_name."\t"."Single End"."\n";
 		
 	}
 	else{
@@ -132,12 +139,14 @@ while(<file>){
 		my $descibe;
 	
 		undef $descibe;
+		
+		$descibe = $reads_name."\t".$descibe;
 	
 		for($i=0; $i<scalar(@FLAG_num_reverse); $i+=1,){
 	
 			if($FLAG_num_reverse[$i] == 1){
 		
-				$descibe = $descibe.$FLAG_describe{$arr_sort[$i]}."\t";
+				$descibe = $descibe.$FLAG_describe{$arr_sort[$i]}."; ";
 		
 			}else{
 		
