@@ -21,10 +21,56 @@
 =head3 Edit time
 
 	2019-07-21 22:23	1.0	
+	2019-07-22 19:32	1.1 Enhance model accuracy
 	
 =cut
 
 
+sub CIRAG_count {
+
+	my $CIGAR_num = $_[0];
+	
+	my @dig = split/\D/,$CIGAR_num;
+	
+	my @let = split/\d+/,$CIGAR_num;
+	
+	my @len_subread;
+	
+	my $start_len = @dig[0];
+	
+	for(my $i=0; $i<scalar(@dig); $i+=1,){
+	
+		if($i == 0){
+			
+			my $st = 0;
+			
+			push @len_subread, $st;
+		
+		}
+		else{
+			
+			if($let[$i+1] eq "D" or $let[$i+1] eq "H"){
+			
+				$start_len = $start_len;
+				
+				push @len_subread, $start_len;
+			
+			}
+			else{
+				
+				push @len_subread, $start_len;
+				
+				$start_len += $dig[$i];
+			
+			}
+		
+		}
+	
+	}
+	
+	return @len_subread;
+
+}
 
 open(file, "<", $ARGV[0]);
 
@@ -41,6 +87,8 @@ while(<file>){
 	my @let = split/\d+/,$CIGAR_num;
 	
 	push @seq_CIGAR_dev, $read_id."\t";
+	
+	my @sub_read_start = CIRAG_count($CIGAR_num);
 	
 	for(my $i=0; $i<scalar(@dig); $i+=1){
 		
@@ -59,11 +107,11 @@ while(<file>){
 			}
 			else{
 			
-			$seq = substr($BAM_seq, 0, $dig[$i]);
+				$seq = substr($BAM_seq, 0, $dig[$i]);
 			
-			$seq = $let[$i+1]." ".$seq."\t";
+				$seq = $let[$i+1]." ".$seq."\t";
 			
-			push @seq_CIGAR_dev, $seq;
+				push @seq_CIGAR_dev, $seq;
 			
 			}
 		
@@ -80,23 +128,8 @@ while(<file>){
 			
 				}
 			else{
-			
-				if($let[$i] eq "D"){
 				
-					$seq = substr($BAM_seq, $dig[$i-2], $dig[$i]);
-				
-				}
-				elsif($let[$i] eq "I"){
-				
-					$pos = $dig[$i-2]+$dig[$i-1];
-				
-					$seq = substr($BAM_seq, $pos, $dig[$i]);
-				}
-				else{
-				
-					$seq = substr($BAM_seq, $dig[$i-1], $dig[$i]);
-				
-				}
+				$seq = substr($BAM_seq, $sub_read_start[$i], $dig[$i]);
 				
 				$seq = $let[$i+1]." ".$seq."\t";
 			
