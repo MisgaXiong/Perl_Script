@@ -36,6 +36,18 @@ sub CIRAG_count {
 	
 	my @len_subread;
 	
+	
+	if($let[1] eq "N"){
+	
+		$dig[0] = 0;
+	
+	}
+	else{
+	
+		@dig = @dig;
+	
+	}
+	
 	my $start_len = @dig[0];
 	
 	for(my $i=0; $i<scalar(@dig); $i+=1,){
@@ -44,21 +56,21 @@ sub CIRAG_count {
 			
 			my $st = 0;
 			
-			push @len_subread, $st;
+			push @len_subread, $st."\n";
 		
 		}
 		else{
 			
-			if($let[$i+1] eq "D" or $let[$i+1] eq "H"){
+			if($let[$i+1] eq "D" or $let[$i+1] eq "H" or $let[$i+1] eq "N"){
 			
 				$start_len = $start_len;
 				
-				push @len_subread, $start_len;
+				push @len_subread, $start_len."\n";
 			
 			}
 			else{
 				
-				push @len_subread, $start_len;
+				push @len_subread, $start_len."\n";
 				
 				$start_len += $dig[$i];
 			
@@ -105,13 +117,18 @@ while(<file>){
 				push @seq_CIGAR_dev, $seq;
 			
 			}
+			elsif($let[$i+1] eq "N"){
+			
+				next;
+			
+			}
 			else{
 			
-				$seq = substr($BAM_seq, 0, $dig[$i]);
+			$seq = substr($BAM_seq, 0, $dig[$i]);
 			
-				$seq = $let[$i+1]." ".$seq."\t";
+			$seq = $let[$i+1]." ".$seq."\t";
 			
-				push @seq_CIGAR_dev, $seq;
+			push @seq_CIGAR_dev, $seq;
 			
 			}
 		
@@ -126,7 +143,12 @@ while(<file>){
 				
 				push @seq_CIGAR_dev, $seq;
 			
-				}
+			}
+			elsif($let[$i+1] eq "N"){
+			
+				next;
+			
+			}
 			else{
 				
 				$seq = substr($BAM_seq, $sub_read_start[$i], $dig[$i]);
