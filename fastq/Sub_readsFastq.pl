@@ -7,7 +7,7 @@
 =head1 Description
 
 	Extract sub reads from PE fastq file. 
-	Not: PE fastq file need clean fastq file by trim. (only contain paire reads)
+	Not: PE fastq file need raw or clean (trimomatic) fastq file by trim. (only contain paire reads)
 	
 =head2 Usage
 
